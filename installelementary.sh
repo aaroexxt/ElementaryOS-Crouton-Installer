@@ -19,8 +19,6 @@ pause(){
    read -p "$*"
 }
 
-set -e;
-
 if [[ $(id -u) -ne 0 ]]
   then echo "Sorry, but it appears that you didn't run this script as root. Please run it as a root user!";
   exit 1;
