@@ -68,15 +68,16 @@ crosh() {
     pause "Is this script (name unchanged) in your downloads folder? (If no, exit using ctrl+c and fix, else press enter)";
     #crosh part 1
     echo "Creating chroot... (make sure that crouton is located in ~/Downloads/crouton)";
-    sudo sh ~/Downloads/crouton -t xfce,keyboard,extension -n elementary;
+    cd ~/Downloads;
+    sudo sh crouton -t xfce,keyboard,extension -n elementary;
     echo "Chroot created. Entering chroot.";
-    sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh a #switch to chroot
+    sudo enter-chroot -n elementary -u root sh installelementary.sh a #switch to chroot
     #crosh part 2
     sudo cp /usr/local/bin/startxfce4 /usr/local/bin/startelementary;
     cd /usr/local/bin/;
     sed -i '$d' startelementary;
     echo "exec startelementary" >> startelementary;
-    sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh b #reenter chroot
+    sudo enter-chroot -n elementary -u root sh installelementary.sh b #reenter chroot
     echo "Setup done."
     pause "Press enter to launch ElementaryOS!";
     echo "Launching...";
