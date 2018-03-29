@@ -32,11 +32,26 @@ chrootparta() {
     echo "Adding ElementaryOS repos";
     sudo add-apt-repository -y ppa:elementary-os/stable;
     sudo add-apt-repository -y ppa:elementary-os/os-patches;
+    sudo apt-add-repository ppa:versable/elementary-update;
+    echo "Adding Intel graphics driver patch repos...";
+    sudo apt-add-repository ppa:glasen/intel-driver;
     echo "Updating apt-get";
     sudo apt-get update;
     echo "Installing elementary-desktop (this might take a while)...";
     sudo apt-get install -y elementary-desktop;
     sudo apt-get install -y gtk2-engines-pixbuf;
+    sudo apt-get install -y elementary-tweaks;
+    sudo apt-get install xserver-xorg-lts-raring;
+    echo "Installing graphics driver patches...";
+    sudo apt-get install --install-recommends linux-generic-lts-quantal xserver-xorg-lts-quantal libgl1-mesa-glx-lts-quantal;
+    sudo apt-get update;
+    echo "Appling distribution update...";
+    sudo apt-get -y dist-upgrade;
+    sudo apt-get install mesa-utils;
+    echo "Intel graphics info";
+    glxinfo | grep "OpenGL version" || echo "error with graphics";
+    sudo apt-get install curl;
+
     echo "Done installing elementary-desktop.";
     echo "EXITING CHROOT";
     exit;
