@@ -32,7 +32,7 @@ chrootparta() {
     echo "Adding ElementaryOS repos";
     sudo add-apt-repository -y ppa:elementary-os/stable;
     sudo add-apt-repository -y ppa:elementary-os/os-patches;
-    sudo apt-add-repository ppa:versable/elementary-update;
+    sudo apt-add-repository -y ppa:versable/elementary-update;
     echo "Adding Intel graphics driver patch repos...";
     sudo apt-add-repository ppa:glasen/intel-driver;
     echo "Updating apt-get";
