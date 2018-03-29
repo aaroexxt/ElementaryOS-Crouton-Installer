@@ -23,7 +23,6 @@ if [[ $(id -u) -ne 0 ]]
   then echo "Sorry, but it appears that you didn't run this script as root. Please run it as a root user!";
   exit 1;
 fi
-trap 'abort' 0;
 chrootparta() {
     echo "ENTERED CHROOT";
     echo "Updating apt-get";
@@ -48,15 +47,12 @@ chrootpartb() {
     cd /usr/bin;
     echo "copying startxfce script"
     sudo cp startxfce4 startelementary;
-    n=10;
-    echo "deleting $n lines from startelementary"
-    sudo sed -i "1,$n{d}" startelementary;
+    echo "replacing line with proper reference to xinit_pantheon"
+    sudo sed -i 's/\/etc\/xdg\/xfce4\/xinitrc $CLIENTRC $SERVERRC/\/usr\/bin\/xinit_pantheon/' startelementary;
     echo "adding xinit_pantheon starter"
-    echo "exec $prog /usr/bin/xinit_pantheon" | sudo tee -a startelementary > /dev/null/;
-    echo "creating xinit_pantheon script";
     sudo touch xinit_pantheon;
-    echo "#!/bin/sh" | sudo tee -a startelementary > /dev/null/;
-    echo '/usr/sbin/lightdm-session "gnome-session –session=pantheon"' | sudo tee -a startelementary > /dev/null/;
+    echo "#!/bin/sh" | sudo tee -a xinit_pantheon;
+    echo '/usr/sbin/lightdm-session "gnome-session --session=pantheon"' | sudo tee -a xinit_pantheon;
     sudo chmod +x xinit_pantheon;
     sudo chown root:root xinit_pantheon;
     echo "EXITING CHROOT";
@@ -72,6 +68,7 @@ crosh() {
     sudo sh crouton -t xfce,keyboard,extension -n elementary;
     echo "Chroot created. Entering chroot.";
     sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh a #switch to chroot
+    echo "Outside of chroot. Continuing installation.";
     #crosh part 2
     sudo cp /usr/local/bin/startxfce4 /usr/local/bin/startelementary;
     cd /usr/local/bin/;
@@ -90,5 +87,3 @@ elif [ "$1" = "b" ]
 then chrootpartb
 else crosh
 fi
-
-trap : 0
