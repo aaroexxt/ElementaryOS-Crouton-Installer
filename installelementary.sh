@@ -78,7 +78,7 @@ crosh() {
     pause "Press enter to launch ElementaryOS!";
     echo "Launching...";
     sudo startelementary;
-    echo "ElementaryOS setup script terminating."
+    echo "ElementaryOS setup script terminating. Hope it worked ;)"
 }
 
 if [ "$1" = "a" ]
