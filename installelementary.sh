@@ -78,7 +78,6 @@ chrootpartb() {
 }
 
 crosh() {
-    pause "Is this script (name unchanged) in your downloads folder? (If no, exit using ctrl+c and fix, else press enter)";
     #crosh part 1
     (cd ~/Downloads/ && echo "CD command ran successfully") || ( (cd /home/chronos/user/Downloads/ && echo "Backup CD command run") || echo "Error: Couldn't CD into downloads directory."; exit 1;)
     echo -e "${BLUE}Grabbing latest version of crouton installer...${NC}";
