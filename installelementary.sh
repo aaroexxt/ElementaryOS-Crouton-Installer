@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
-echo "Welcome to the ElementaryOS and Linux Mint automated installer script V9, by Aaron Becker.";
+echo "Welcome to the ElementaryOS and Linux Mint automated installer script V10, by Aaron Becker.";
 echo "This script will install ElementaryOS and Linux Mint on your chromebook running crouton.";
 echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
 
@@ -60,7 +60,7 @@ chrootparta() {
     sudo apt-get -y dist-upgrade;
     printf "${YELLOW}Intel graphics info${NC}";
     glxinfo | grep "OpenGL version" || printf "${RED}Error displaying graphics version: There might be a problem with the installation${NC}\n";
-    sudo apt-get install curl;
+    sudo apt-get install -y curl;
 
     printf "${YELLOW}Done installing elementary-desktop.${NC}\n";
     printf "${YELLOW}EXITING CHROOT${NC}\n";
@@ -90,6 +90,8 @@ chrootpartb() {
     sudo chown root:root xinit_pantheon;
     sudo chmod +x xinit_cinnamon;
     sudo chown root:root xinit_cinnamon;
+    printf "${YELLOW}Changing a few important settings...${NC}\n"
+    sudo apt-get purge -y gnome-keyring;
     printf "${YELLOW}EXITING CHROOT${NC}\n";
     exit;
 }
