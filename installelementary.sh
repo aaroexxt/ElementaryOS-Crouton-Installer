@@ -81,7 +81,7 @@ crosh() {
     pause "Is this script (name unchanged) in your downloads folder? (If no, exit using ctrl+c and fix, else press enter)";
     #crosh part 1
     echo "Grabbing latest version of crouton installer...";
-    wget -O ~/Downloads/crouton https://goo.gl/fd3zc;
+    sudo wget -O ~/Downloads/crouton https://goo.gl/fd3zc;
     echo "Creating chroot... (make sure that crouton is located in ~/Downloads/crouton)";
     cd ~/Downloads;
     sudo sh crouton -t xfce,keyboard,extension -n elementary;
