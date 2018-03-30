@@ -47,7 +47,7 @@ chrootparta() {
     sudo apt-get install -y xserver-xorg-lts-raring;
     printf "${YELLOW}Installing graphics driver patches...${NC}\n";
     sudo apt-get install -y --install-recommends linux-generic-lts-quantal xserver-xorg-lts-quantal libgl1-mesa-glx-lts-quantal;
-    sudo apt-get install mesa-utils;
+    sudo apt-get install -y mesa-utils;
     sudo apt-get upgrade;
     printf "${YELLOW}Appling distribution update...${NC}\n";
     sudo apt-get -y dist-upgrade;
