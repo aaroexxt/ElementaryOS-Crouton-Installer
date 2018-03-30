@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
-echo "Welcome to the ElementaryOS automated installer script V7, by Aaron Becker.";
+echo "Welcome to the ElementaryOS automated installer script V9, by Aaron Becker.";
 echo "This script will install ElementaryOS on your chromebook running crouton.";
 echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
 
@@ -24,56 +24,56 @@ if [[ $(id -u) -ne 0 ]]
   exit 1;
 fi
 chrootparta() {
-    echo "ENTERED CHROOT";
-    echo "Updating apt-get";
+    printf "${YELLOW}ENTERED CHROOT${NC}\n";
+    printf "${YELLOW}Updating apt-get${NC}\n";
     sudo apt-get update;
-    echo "Installing required packages to begin installation";
+    printf "${YELLOW}Installing required packages to begin installation${NC}\n";
     sudo apt-get install -y python-software-properties software-properties-common;
-    echo "Adding ElementaryOS repos";
+    printf "${YELLOW}Adding ElementaryOS repos${NC}\n";
     sudo add-apt-repository -y ppa:elementary-os/stable;
     sudo add-apt-repository -y ppa:elementary-os/os-patches;
     sudo add-apt-repository -y ppa:versable/elementary-update;
-    echo "Adding graphics driver patch repos...";
+    printf "${YELLOW}Adding graphics driver patch repos...${NC}\n";
     sudo add-apt-repository -y https://download.01.org/gfx/ubuntu/16.04/main;
-    echo "Adding more driver patch repos...";
+    printf "${YELLOW}Adding more driver patch repos...${NC}\n";
     wget –no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg -O – | sudo apt-key add –
     wget –no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg-2 -O – | sudo apt-key add –
-    echo "Updating apt-get";
+    printf "${YELLOW}Updating apt-get${NC}\n";
     sudo apt-get update;
-    echo "Installing elementary-desktop (this might take a while)...";
+    printf "${YELLOW}Installing elementary-desktop (this might take a while)...${NC}\n";
     sudo apt-get install -y elementary-desktop;
     sudo apt-get install -y gtk2-engines-pixbuf;
     sudo apt-get install -y elementary-tweaks;
     sudo apt-get install -y xserver-xorg-lts-raring;
-    echo "Installing graphics driver patches...";
+    printf "${YELLOW}Installing graphics driver patches...${NC}\n";
     sudo apt-get install -y --install-recommends linux-generic-lts-quantal xserver-xorg-lts-quantal libgl1-mesa-glx-lts-quantal;
     sudo apt-get install mesa-utils;
     sudo apt-get upgrade;
-    echo "Appling distribution update...";
+    printf "${YELLOW}Appling distribution update...${NC}\n";
     sudo apt-get -y dist-upgrade;
-    echo "Intel graphics info";
-    glxinfo | grep "OpenGL version" || echo "error with graphics";
+    printf "${YELLOW}Intel graphics info${NC}";
+    glxinfo | grep "OpenGL version" || printf "${RED}Error displaying graphics version: There might be a problem with the installation${NC}\n";
     sudo apt-get install curl;
 
-    echo "Done installing elementary-desktop.";
-    echo "EXITING CHROOT";
+    printf "${YELLOW}Done installing elementary-desktop.${NC}\n";
+    printf "${YELLOW}EXITING CHROOT${NC}\n";
     exit;
 }
 
 chrootpartb() {
-    echo "ENTERED CHROOT";
+    printf "${YELLOW}ENTERED CHROOT${NC}\n";
     cd /usr/bin;
-    echo "copying startxfce script"
+    printf "${YELLOW}copying startxfce script${NC}\n"
     sudo cp startxfce4 startelementary;
-    echo "replacing line with proper reference to xinit_pantheon"
+    printf "${YELLOW}replacing line with proper reference to xinit_pantheon${NC}\n"
     sudo sed -i 's/\/etc\/xdg\/xfce4\/xinitrc $CLIENTRC $SERVERRC/\/usr\/bin\/xinit_pantheon/' startelementary;
-    echo "adding xinit_pantheon starter"
+    printf "${YELLOW}adding xinit_pantheon starter${NC}\n"
     sudo touch xinit_pantheon;
     echo "#!/bin/sh" | sudo tee -a xinit_pantheon;
     echo '/usr/sbin/lightdm-session "gnome-session --session=pantheon"' | sudo tee -a xinit_pantheon;
     sudo chmod +x xinit_pantheon;
     sudo chown root:root xinit_pantheon;
-    echo "EXITING CHROOT";
+    printf "${YELLOW}EXITING CHROOT${NC}\n";
     exit;
 }
 
@@ -81,24 +81,30 @@ crosh() {
     pause "Is this script (name unchanged) in your downloads folder? (If no, exit using ctrl+c and fix, else press enter)";
     #crosh part 1
     (cd ~/Downloads/ && echo "CD command ran successfully") || ( (cd /home/chronos/user/Downloads/ && echo "Backup CD command run") || echo "Error: Couldn't CD into downloads directory."; exit 1;)
-    echo "Grabbing latest version of crouton installer...";
+    echo -e "${BLUE}Grabbing latest version of crouton installer...${NC}";
     sudo wget -O crouton https://goo.gl/fd3zc;
-    echo "Creating chroot... (make sure that crouton is located in ~/Downloads/crouton)";
+    echo -e "${BLUE}Creating chroot... (make sure that crouton is located in ~/Downloads/crouton)${NC}";
     sudo sh crouton -t xfce,keyboard,extension -n elementary;
-    echo "Chroot created. Entering chroot.";
+    echo -e "${BLUE}Chroot created. Entering chroot.${NC}";
     sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh a #switch to chroot
-    echo "Outside of chroot. Continuing installation.";
+    echo -e "${BLUE}Outside of chroot. Continuing installation.${NC}";
     #crosh part 2
     sudo cp /usr/local/bin/startxfce4 /usr/local/bin/startelementary;
     cd /usr/local/bin/;
     sudo sed -i 's/startxfce4/startelementary/' startelementary;
     sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh b #reenter chroot
-    echo "Setup done."
+    echo -e "${GREEN}Setup done successfully.${NC}"
     pause "Press enter to launch ElementaryOS!";
     echo "Launching...";
     sudo startelementary;
-    echo "ElementaryOS setup script terminating. Hope it worked ;)"
+    echo -e "${GREEN}ElementaryOS setup script terminating. Hope it worked ;)${NC}"
 }
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
 if [ "$1" = "a" ]
 then chrootparta
