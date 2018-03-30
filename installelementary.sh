@@ -41,9 +41,9 @@ chrootparta() {
     printf "${YELLOW}Updating apt-get${NC}\n";
     sudo apt-get update;
     printf "${YELLOW}Installing elementary-desktop (this might take a while)...${NC}\n";
-    sudo apt-get install -y elementary-desktop;
-    sudo apt-get install -y gtk2-engines-pixbuf;
-    sudo apt-get install -y elementary-tweaks;
+    sudo apt-get install -y --allow-unauthenticated elementary-desktop;
+    sudo apt-get install -y --allow-unauthenticated gtk2-engines-pixbuf;
+    sudo apt-get install -y --allow-unauthenticated elementary-tweaks;
     sudo apt-get install -y xserver-xorg-lts-raring;
     printf "${YELLOW}Installing graphics driver patches...${NC}\n";
     sudo apt-get install -y --install-recommends linux-generic-lts-quantal xserver-xorg-lts-quantal libgl1-mesa-glx-lts-quantal;
