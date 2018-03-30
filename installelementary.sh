@@ -1,0 +1,113 @@
+#!/bin/bash
+echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
+echo "Welcome to the ElementaryOS automated installer script V9, by Aaron Becker.";
+echo "This script will install ElementaryOS on your chromebook running crouton.";
+echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
+
+abort()
+{
+    echo >&2 '
+***************
+*** ABORTED ***
+***************
+'
+    echo "An error occurred :( Exiting..." >&2
+    exit 1;
+}
+
+pause(){
+   read -p "$*"
+}
+
+if [[ $(id -u) -ne 0 ]]
+  then echo "Sorry, but it appears that you didn't run this script as root. Please run it as a root user!";
+  exit 1;
+fi
+chrootparta() {
+    printf "${YELLOW}ENTERED CHROOT${NC}\n";
+    printf "${YELLOW}Updating apt-get${NC}\n";
+    sudo apt-get update;
+    printf "${YELLOW}Installing required packages to begin installation${NC}\n";
+    sudo apt-get install -y python-software-properties software-properties-common;
+    printf "${YELLOW}Adding ElementaryOS repos${NC}\n";
+    sudo add-apt-repository -y ppa:elementary-os/stable;
+    sudo add-apt-repository -y ppa:elementary-os/os-patches;
+    sudo add-apt-repository -y ppa:versable/elementary-update;
+    printf "${YELLOW}Adding graphics driver patch repos...${NC}\n";
+    sudo add-apt-repository -y https://download.01.org/gfx/ubuntu/16.04/main;
+    printf "${YELLOW}Adding more driver patch repos...${NC}\n";
+    wget –no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg -O – | sudo apt-key add –
+    wget –no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg-2 -O – | sudo apt-key add –
+    printf "${YELLOW}Updating apt-get${NC}\n";
+    sudo apt-get update;
+    printf "${YELLOW}Installing elementary-desktop (this might take a while)...${NC}\n";
+    sudo apt-get install -y elementary-desktop;
+    sudo apt-get install -y gtk2-engines-pixbuf;
+    sudo apt-get install -y elementary-tweaks;
+    sudo apt-get install -y xserver-xorg-lts-raring;
+    printf "${YELLOW}Installing graphics driver patches...${NC}\n";
+    sudo apt-get install -y --install-recommends linux-generic-lts-quantal xserver-xorg-lts-quantal libgl1-mesa-glx-lts-quantal;
+    sudo apt-get install mesa-utils;
+    sudo apt-get upgrade;
+    printf "${YELLOW}Appling distribution update...${NC}\n";
+    sudo apt-get -y dist-upgrade;
+    printf "${YELLOW}Intel graphics info${NC}";
+    glxinfo | grep "OpenGL version" || printf "${RED}Error displaying graphics version: There might be a problem with the installation${NC}\n";
+    sudo apt-get install curl;
+
+    printf "${YELLOW}Done installing elementary-desktop.${NC}\n";
+    printf "${YELLOW}EXITING CHROOT${NC}\n";
+    exit;
+}
+
+chrootpartb() {
+    printf "${YELLOW}ENTERED CHROOT${NC}\n";
+    cd /usr/bin;
+    printf "${YELLOW}copying startxfce script${NC}\n"
+    sudo cp startxfce4 startelementary;
+    printf "${YELLOW}replacing line with proper reference to xinit_pantheon${NC}\n"
+    sudo sed -i 's/\/etc\/xdg\/xfce4\/xinitrc $CLIENTRC $SERVERRC/\/usr\/bin\/xinit_pantheon/' startelementary;
+    printf "${YELLOW}adding xinit_pantheon starter${NC}\n"
+    sudo touch xinit_pantheon;
+    echo "#!/bin/sh" | sudo tee -a xinit_pantheon;
+    echo '/usr/sbin/lightdm-session "gnome-session --session=pantheon"' | sudo tee -a xinit_pantheon;
+    sudo chmod +x xinit_pantheon;
+    sudo chown root:root xinit_pantheon;
+    printf "${YELLOW}EXITING CHROOT${NC}\n";
+    exit;
+}
+
+crosh() {
+    #crosh part 1
+    (cd ~/Downloads/ && echo "CD command ran successfully") || ( (cd /home/chronos/user/Downloads/ && echo "Backup CD command run") || echo "Error: Couldn't CD into downloads directory."; exit 1;)
+    echo -e "${BLUE}Grabbing latest version of crouton installer...${NC}";
+    sudo wget -O crouton https://goo.gl/fd3zc;
+    echo -e "${BLUE}Creating chroot... (make sure that crouton is located in ~/Downloads/crouton)${NC}";
+    sudo sh crouton -t xfce,keyboard,extension -n elementary;
+    echo -e "${BLUE}Chroot created. Entering chroot.${NC}";
+    sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh a #switch to chroot
+    echo -e "${BLUE}Outside of chroot. Continuing installation.${NC}";
+    #crosh part 2
+    sudo cp /usr/local/bin/startxfce4 /usr/local/bin/startelementary;
+    cd /usr/local/bin/;
+    sudo sed -i 's/startxfce4/startelementary/' startelementary;
+    sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh b #reenter chroot
+    echo -e "${GREEN}Setup done successfully.${NC}"
+    pause "Press enter to launch ElementaryOS!";
+    echo "Launching...";
+    sudo startelementary;
+    echo -e "${GREEN}ElementaryOS setup script terminating. Hope it worked ;)${NC}"
+}
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+if [ "$1" = "a" ]
+then chrootparta
+elif [ "$1" = "b" ]
+then chrootpartb
+else crosh
+fi
