@@ -24,56 +24,56 @@ if [[ $(id -u) -ne 0 ]]
   exit 1;
 fi
 chrootparta() {
-    echo -e "${YELLOW}ENTERED CHROOT${NC}";
-    echo -e "${YELLOW}Updating apt-get${NC}";
+    printf "${YELLOW}ENTERED CHROOT${NC}\n";
+    printf "${YELLOW}Updating apt-get${NC}\n";
     sudo apt-get update;
-    echo -e "${YELLOW}Installing required packages to begin installation${NC}";
+    printf "${YELLOW}Installing required packages to begin installation${NC}\n";
     sudo apt-get install -y python-software-properties software-properties-common;
-    echo -e "${YELLOW}Adding ElementaryOS repos${NC}";
+    printf "${YELLOW}Adding ElementaryOS repos${NC}\n";
     sudo add-apt-repository -y ppa:elementary-os/stable;
     sudo add-apt-repository -y ppa:elementary-os/os-patches;
     sudo add-apt-repository -y ppa:versable/elementary-update;
-    echo -e "${YELLOW}Adding graphics driver patch repos...${NC}";
+    printf "${YELLOW}Adding graphics driver patch repos...${NC}\n";
     sudo add-apt-repository -y https://download.01.org/gfx/ubuntu/16.04/main;
-    echo -e "${YELLOW}Adding more driver patch repos...${NC}";
+    printf "${YELLOW}Adding more driver patch repos...${NC}\n";
     wget –no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg -O – | sudo apt-key add –
     wget –no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg-2 -O – | sudo apt-key add –
-    echo -e "${YELLOW}Updating apt-get${NC}";
+    printf "${YELLOW}Updating apt-get${NC}\n";
     sudo apt-get update;
-    echo -e "${YELLOW}Installing elementary-desktop (this might take a while)...${NC}";
+    printf "${YELLOW}Installing elementary-desktop (this might take a while)...${NC}\n";
     sudo apt-get install -y elementary-desktop;
     sudo apt-get install -y gtk2-engines-pixbuf;
     sudo apt-get install -y elementary-tweaks;
     sudo apt-get install -y xserver-xorg-lts-raring;
-    echo -e "${YELLOW}Installing graphics driver patches...${NC}";
+    printf "${YELLOW}Installing graphics driver patches...${NC}\n";
     sudo apt-get install -y --install-recommends linux-generic-lts-quantal xserver-xorg-lts-quantal libgl1-mesa-glx-lts-quantal;
     sudo apt-get install mesa-utils;
     sudo apt-get upgrade;
-    echo -e "${YELLOW}Appling distribution update...${NC}";
+    printf "${YELLOW}Appling distribution update...${NC}\n";
     sudo apt-get -y dist-upgrade;
-    echo -e "${YELLOW}Intel graphics info${NC}";
-    glxinfo | grep "OpenGL version" || echo -e "${RED}Error displaying graphics version: There might be a problem with the installation${NC}";
+    printf "${YELLOW}Intel graphics info${NC}";
+    glxinfo | grep "OpenGL version" || printf "${RED}Error displaying graphics version: There might be a problem with the installation${NC}\n";
     sudo apt-get install curl;
 
-    echo -e "${YELLOW}Done installing elementary-desktop.${NC}";
-    echo -e "${YELLOW}EXITING CHROOT${NC}";
+    printf "${YELLOW}Done installing elementary-desktop.${NC}\n";
+    printf "${YELLOW}EXITING CHROOT${NC}\n";
     exit;
 }
 
 chrootpartb() {
-    echo -e "${YELLOW}ENTERED CHROOT${NC}";
+    printf "${YELLOW}ENTERED CHROOT${NC}\n";
     cd /usr/bin;
-    echo -e "${YELLOW}copying startxfce script${NC}"
+    printf "${YELLOW}copying startxfce script${NC}\n"
     sudo cp startxfce4 startelementary;
-    echo -e "${YELLOW}replacing line with proper reference to xinit_pantheon${NC}"
+    printf "${YELLOW}replacing line with proper reference to xinit_pantheon${NC}\n"
     sudo sed -i 's/\/etc\/xdg\/xfce4\/xinitrc $CLIENTRC $SERVERRC/\/usr\/bin\/xinit_pantheon/' startelementary;
-    echo -e "${YELLOW}adding xinit_pantheon starter${NC}"
+    printf "${YELLOW}adding xinit_pantheon starter${NC}\n"
     sudo touch xinit_pantheon;
     echo "#!/bin/sh" | sudo tee -a xinit_pantheon;
     echo '/usr/sbin/lightdm-session "gnome-session --session=pantheon"' | sudo tee -a xinit_pantheon;
     sudo chmod +x xinit_pantheon;
     sudo chown root:root xinit_pantheon;
-    echo -e "${YELLOW}EXITING CHROOT${NC}";
+    printf "${YELLOW}EXITING CHROOT${NC}\n";
     exit;
 }
 
@@ -103,6 +103,7 @@ crosh() {
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 if [ "$1" = "a" ]
