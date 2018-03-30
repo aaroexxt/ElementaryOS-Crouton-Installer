@@ -81,8 +81,8 @@ crosh() {
     #crosh part 1
     (cd ~/Downloads/ && echo "CD command ran successfully") || ( (cd /home/chronos/user/Downloads/ && echo "Backup CD command run") || echo "Error: Couldn't CD into downloads directory."; exit 1;)
     echo -e "${BLUE}Grabbing latest version of crouton installer...${NC}";
-    sudo wget -O crouton https://goo.gl/fd3zc;
-    echo -e "${BLUE}Creating chroot... (make sure that crouton is located in ~/Downloads/crouton)${NC}";
+    sudo wget -O ~/Downloads/crouton https://goo.gl/fd3zc || (sudo wget -O /home/chronos/user/Downloads/crouton https://goo.gl/fd3zc; echo "Backup command for downloading crouton run";)
+    echo -e "${BLUE}Creating chroot named 'elementary'...${NC}";
     sudo sh crouton -t xfce,keyboard,extension -n elementary;
     echo -e "${BLUE}Chroot created. Entering chroot.${NC}";
     sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh a #switch to chroot
