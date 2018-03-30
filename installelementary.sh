@@ -32,22 +32,25 @@ chrootparta() {
     echo "Adding ElementaryOS repos";
     sudo add-apt-repository -y ppa:elementary-os/stable;
     sudo add-apt-repository -y ppa:elementary-os/os-patches;
-    sudo apt-add-repository -y ppa:versable/elementary-update;
-    echo "Adding Intel graphics driver patch repos...";
-    sudo apt-add-repository ppa:glasen/intel-driver;
+    sudo add-apt-repository -y ppa:versable/elementary-update;
+    echo "Adding graphics driver patch repos...";
+    sudo add-apt-repository -y https://download.01.org/gfx/ubuntu/16.04/main;
+    echo "Adding more driver patch repos...";
+    wget –no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg -O – | sudo apt-key add –
+    wget –no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg-2 -O – | sudo apt-key add –
     echo "Updating apt-get";
     sudo apt-get update;
     echo "Installing elementary-desktop (this might take a while)...";
     sudo apt-get install -y elementary-desktop;
     sudo apt-get install -y gtk2-engines-pixbuf;
     sudo apt-get install -y elementary-tweaks;
-    sudo apt-get install xserver-xorg-lts-raring;
+    sudo apt-get install -y xserver-xorg-lts-raring;
     echo "Installing graphics driver patches...";
-    sudo apt-get install --install-recommends linux-generic-lts-quantal xserver-xorg-lts-quantal libgl1-mesa-glx-lts-quantal;
-    sudo apt-get update;
+    sudo apt-get install -y --install-recommends linux-generic-lts-quantal xserver-xorg-lts-quantal libgl1-mesa-glx-lts-quantal;
+    sudo apt-get install mesa-utils;
+    sudo apt-get upgrade;
     echo "Appling distribution update...";
     sudo apt-get -y dist-upgrade;
-    sudo apt-get install mesa-utils;
     echo "Intel graphics info";
     glxinfo | grep "OpenGL version" || echo "error with graphics";
     sudo apt-get install curl;
@@ -75,12 +78,13 @@ chrootpartb() {
 }
 
 crosh() {
-    pause "Is the crouton installer in your downloads folder? (If no, exit using ctrl+c and fix, else press enter)";
     pause "Is this script (name unchanged) in your downloads folder? (If no, exit using ctrl+c and fix, else press enter)";
     #crosh part 1
+    echo "Grabbing latest version of crouton installer...";
+    wget -O ~/Downloads/crouton https://goo.gl/fd3zc;
     echo "Creating chroot... (make sure that crouton is located in ~/Downloads/crouton)";
     cd ~/Downloads;
-    sudo sh crouton -t xfce,keyboard,extension -n elementary;
+    sudo sh ~/Downloads/crouton -t xfce,keyboard,extension -n elementary;
     echo "Chroot created. Entering chroot.";
     sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh a #switch to chroot
     echo "Outside of chroot. Continuing installation.";
