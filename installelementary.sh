@@ -84,7 +84,7 @@ crosh() {
     wget -O ~/Downloads/crouton https://goo.gl/fd3zc;
     echo "Creating chroot... (make sure that crouton is located in ~/Downloads/crouton)";
     cd ~/Downloads;
-    sudo sh ~/Downloads/crouton -t xfce,keyboard,extension -n elementary;
+    sudo sh crouton -t xfce,keyboard,extension -n elementary;
     echo "Chroot created. Entering chroot.";
     sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh a #switch to chroot
     echo "Outside of chroot. Continuing installation.";
