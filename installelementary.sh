@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
-echo "Welcome to the ElementaryOS and Linux Mint automated installer script V10, by Aaron Becker.";
+echo "Welcome to the ElementaryOS and Linux Mint automated installer script V11, by Aaron Becker.";
 echo "This script will install ElementaryOS and Linux Mint on your chromebook running crouton.";
 echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
 
@@ -116,6 +116,7 @@ chrootpartb() {
     sudo apt-get -y install php5 php5-mhash php5-mcrypt php5-curl php5-cli php5-mysql php5-gd php5-intl php5-xsl;
     printf "${YELLOW}Installing more developer software...${NC}\n"
     sudo apt-get install -y unzip gimp imagemagick filezilla build-essential;
+    sudo apt-get install software-center -y;
     printf "${YELLOW}EXITING CHROOT${NC}\n";
     exit;
 }
