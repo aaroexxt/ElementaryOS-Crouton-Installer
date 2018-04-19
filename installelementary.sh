@@ -92,6 +92,30 @@ chrootpartb() {
     sudo chown root:root xinit_cinnamon;
     printf "${YELLOW}Changing a few important settings...${NC}\n"
     sudo apt-get purge -y gnome-keyring;
+    printf "${YELLOW}Installing git...${NC}\n"
+    sudo apt-get install -y git;
+     printf "${YELLOW}Installing nodejs...${NC}\n"
+    sudo apt-get install -y curl;
+    curl — silent — location https://deb.nodesource.com/setup_0.12 | sudo bash -
+    sudo apt-get install nodejs -y;
+    npm config set prefix '~/.npm-packages'
+    echo 'export PATH="$PATH:$HOME/.npm-packages/bin"' >> ~/.bashrc
+     printf "${YELLOW}Installing sublime-text3...${NC}\n"
+    sudo apt-get install software-properties-common python-software-properties -y
+    sudo add-apt-repository ppa:webupd8team/sublime-text-3 -y;
+    sudo apt-get update -y;
+    sudo apt-get install sublime-text-installer -y;
+    sudo apt-get install nautilus -y;
+    printf "${YELLOW}Installing apache server...${NC}\n"
+    printf "${GREEN}To use, cd into directory and type 'php -S localhost:8000'. To use MYSQL, type 'sudo /usr/sbin/mysqld' ${NC}\n"
+    sudo apt-get install apache2 -y
+    sudo apt-get install mysql-server libapache2-mod-auth-mysql php5-mysql
+    sudo mysql_install_db
+    sudo add-apt-repository ppa:ondrej/php5
+    sudo apt-get -y update
+    sudo apt-get -y install php5 php5-mhash php5-mcrypt php5-curl php5-cli php5-mysql php5-gd php5-intl php5-xsl;
+    printf "${YELLOW}Installing more developer software...${NC}\n"
+    sudo apt-get install -y unzip gimp imagemagick filezilla build-essential;
     printf "${YELLOW}EXITING CHROOT${NC}\n";
     exit;
 }
