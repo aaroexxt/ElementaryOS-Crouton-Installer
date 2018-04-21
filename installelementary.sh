@@ -133,6 +133,7 @@ crosh() {
     #crosh part 1
     (cd ~/Downloads/ && echo "CD command ran successfully") || ( (cd /home/chronos/user/Downloads/ && echo "Warning: Backup CD command run") || echo "Error: Couldn't CD into downloads directory."; exit 1;)
     echo -e "${BLUE}Grabbing latest version of crouton installer...${NC}";
+    (sudo rm ~/Downloads/crouton; echo "Deleted previous version of crouton installer") || (sudo rm /home/chronos/user/Downloads/crouton; echo "Deleted previous version of crouton installer with WARNING: Backup command")
     sudo wget -O ~/Downloads/crouton https://goo.gl/fd3zc || (sudo wget -O /home/chronos/user/Downloads/crouton https://goo.gl/fd3zc && echo "Warning: Backup command for downloading crouton run";)
     echo -e "${BLUE}Creating chroot named 'elementary'...${NC}";
     sudo sh crouton -t kde,keyboard,extension -n elementary || (sudo sh /home/chronos/user/Downloads/crouton -t kde,keyboard,extension -n elementary && echo "Warning: Backup command for making chroot run");
