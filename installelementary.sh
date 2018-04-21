@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
-echo "Welcome to the ElementaryOS and Linux Mint automated installer script V11, by Aaron Becker.";
+echo "Welcome to the ElementaryOS and Linux Mint automated installer script V12, by Aaron Becker.";
 echo "This script will install ElementaryOS and Linux Mint on your chromebook running crouton.";
 echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
 
@@ -25,7 +25,10 @@ if [[ $(id -u) -ne 0 ]]
 fi
 chrootparta() {
     printf "${YELLOW}ENTERED CHROOT${NC}\n";
-    printf "${YELLOW}Updating apt-get${NC}\n";
+    printf "${YELLOW}Updating apt-get and adding additional repos...${NC}\n";
+    sudo add-apt-repository https://download.01.org/gfx/ubuntu/14.04/main
+    wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg -O - | sudo apt-key add -
+    wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg-2 -O - | sudo apt-key add -
     sudo apt-get update;
     printf "${YELLOW}Installing required packages to begin installation${NC}\n";
     sudo apt-get install -y python-software-properties software-properties-common;
@@ -51,7 +54,9 @@ chrootparta() {
     sudo apt-get install -y --allow-unauthenticated cinnamon;
     sudo apt-get install -y python-software-properties ttf-ubuntu-font-family ubuntu-settings;
     printf "${YELLOW}Installing extra small programs (this might take a while)...${NC}\n";
-    sudo apt-get install -y unace p7zip-rar sharutils rar unrar arj lunzip lzip nano uget hardinfo libavcodec-extra ttf-mscorefonts-installer
+    sudo apt-get install -y unace p7zip-rar sharutils rar unrar arj lunzip lzip nano uget hardinfo libavcodec-extra ttf-mscorefonts-installer;
+    sudo apt-get install -y ttf-ubuntu-font-family;
+    sudo apt-get install -y software-center;
     printf "${YELLOW}Installing graphics driver patches...${NC}\n";
     sudo apt-get install -y --install-recommends linux-generic-lts-quantal xserver-xorg-lts-quantal libgl1-mesa-glx-lts-quantal;
     sudo apt-get install -y mesa-utils;
@@ -100,23 +105,26 @@ chrootpartb() {
     sudo apt-get install nodejs -y;
     npm config set prefix '~/.npm-packages'
     echo 'export PATH="$PATH:$HOME/.npm-packages/bin"' >> ~/.bashrc
-     printf "${YELLOW}Installing sublime-text3...${NC}\n"
+    printf "${YELLOW}Installing sublime-text3...${NC}\n"
     sudo apt-get install software-properties-common python-software-properties -y
     sudo add-apt-repository ppa:webupd8team/sublime-text-3 -y;
     sudo apt-get update -y;
-    sudo apt-get install sublime-text-installer -y;
-    sudo apt-get install nautilus -y;
+    sudo apt-get install -y sublime-text-installer;
+    sudo apt-get install -y nautilus;
     printf "${YELLOW}Installing apache server...${NC}\n"
     printf "${GREEN}To use, cd into directory and type 'php -S localhost:8000'. To use MYSQL, type 'sudo /usr/sbin/mysqld' ${NC}\n"
-    sudo apt-get install apache2 -y
-    sudo apt-get install mysql-server libapache2-mod-auth-mysql php5-mysql
+    sudo apt-get install -y apache2;
+    sudo apt-get install -y mysql-server libapache2-mod-auth-mysql php5-mysql
     sudo mysql_install_db
-    sudo add-apt-repository ppa:ondrej/php5
+    sudo add-apt-repository -y ppa:ondrej/php5
     sudo apt-get -y update
-    sudo apt-get -y install php5 php5-mhash php5-mcrypt php5-curl php5-cli php5-mysql php5-gd php5-intl php5-xsl;
+    sudo apt-get install -y php5 php5-mhash php5-mcrypt php5-curl php5-cli php5-mysql php5-gd php5-intl php5-xsl;
     printf "${YELLOW}Installing more developer software...${NC}\n"
     sudo apt-get install -y unzip gimp imagemagick filezilla build-essential;
-    sudo apt-get install software-center -y;
+    printf "${YELLOW}Installing Steam...${NC}"
+    wget http://media.steampowered.com/client/installer/steam.deb;
+    sudo apt-get install -y gdebi-core;
+    sudo gdebi steam.deb;
     printf "${YELLOW}EXITING CHROOT${NC}\n";
     exit;
 }
@@ -127,7 +135,7 @@ crosh() {
     echo -e "${BLUE}Grabbing latest version of crouton installer...${NC}";
     sudo wget -O ~/Downloads/crouton https://goo.gl/fd3zc || (sudo wget -O /home/chronos/user/Downloads/crouton https://goo.gl/fd3zc && echo "Warning: Backup command for downloading crouton run";)
     echo -e "${BLUE}Creating chroot named 'elementary'...${NC}";
-    sudo sh crouton -t xfce,keyboard,extension -n elementary || (sudo sh /home/chronos/user/Downloads/crouton -t xfce,keyboard,extension -n elementary && echo "Warning: Backup command for making chroot run");
+    sudo sh crouton -t kde,keyboard,extension -n elementary || (sudo sh /home/chronos/user/Downloads/crouton -t kde,keyboard,extension -n elementary && echo "Warning: Backup command for making chroot run");
     echo -e "${BLUE}Chroot created. Entering chroot.${NC}";
     sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh a #switch to chroot
     echo -e "${BLUE}Outside of chroot. Continuing installation.${NC}";
