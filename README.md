@@ -6,5 +6,6 @@ Press Ctrl+Alt+T to launch crosh.
 Type in shell and press enter (your chromebook needs to be in developer mode)
 Paste:
 ```
-echo "Downloading installer..."; sudo wget -O ~/Downloads/installelementary.sh https://raw.githubusercontent.com/aaroexxt/ElementaryOS-Crouton-Installer/master/installelementary.sh; echo "Running installer..."; sudo bash ~/Downloads/installelementary.sh;
+echo "Downloading installer..."; sudo rm ~/Downloads/installelementary.sh; echo "Deleted previous installer version" || echo "No previous installer file found"; sudo 
+wget -O ~/Downloads/installelementary.sh https://raw.githubusercontent.com/aaroexxt/ElementaryOS-Crouton-Installer/master/installelementary.sh; echo "Running installer..."; sudo bash ~/Downloads/installelementary.sh;
 ```
