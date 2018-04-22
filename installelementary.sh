@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
-echo "Welcome to the ElementaryOS and Linux Mint automated installer script V12, by Aaron Becker.";
+echo "Welcome to the ElementaryOS and Linux Mint automated installer script V13, by Aaron Becker.";
 echo "This script will install ElementaryOS and Linux Mint on your chromebook running crouton.";
 echo "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-";
 
@@ -136,7 +136,7 @@ crosh() {
     (sudo rm ~/Downloads/crouton; echo "Deleted previous version of crouton installer") || (sudo rm /home/chronos/user/Downloads/crouton; echo "Deleted previous version of crouton installer with WARNING: Backup command")
     sudo wget -O ~/Downloads/crouton https://goo.gl/fd3zc || (sudo wget -O /home/chronos/user/Downloads/crouton https://goo.gl/fd3zc && echo "Warning: Backup command for downloading crouton run";)
     echo -e "${BLUE}Creating chroot named 'elementary'...${NC}";
-    sudo sh crouton -t kde,keyboard,extension -n elementary || (sudo sh /home/chronos/user/Downloads/crouton -t kde,keyboard,extension -n elementary && echo "Warning: Backup command for making chroot run");
+    sudo sh crouton -t kde,xfce,keyboard,extension -n elementary || (sudo sh /home/chronos/user/Downloads/crouton -t kde,xfce,keyboard,extension -n elementary && echo "Warning: Backup command for making chroot run");
     echo -e "${BLUE}Chroot created. Entering chroot.${NC}";
     sudo enter-chroot -n elementary -u root sh ~/Downloads/installelementary.sh a #switch to chroot
     echo -e "${BLUE}Outside of chroot. Continuing installation.${NC}";
