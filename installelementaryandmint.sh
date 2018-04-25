@@ -97,6 +97,7 @@ chrootpartb() {
     sudo chown root:root xinit_cinnamon;
     printf "${YELLOW}Changing a few important settings...${NC}\n"
     sudo apt-get purge -y gnome-keyring;
+    sudo apt-get install -y kwin;
     printf "${YELLOW}Installing git...${NC}\n"
     sudo apt-get install -y git;
      printf "${YELLOW}Installing nodejs...${NC}\n"
